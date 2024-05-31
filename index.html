@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal-like Homepage</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: green;
+            font-family: monospace;
+            overflow: hidden;
+            cursor: none; /* Hide the mouse cursor */
+        }
+
+        #terminal {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        #header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #project-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .project {
+            cursor: none; /* Hide the mouse cursor over list items */
+            padding: 5px 0;
+        }
+
+        .project.selected {
+            background-color: green;
+            color: black;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9); 
+            color: green;
+            font-family: monospace;
+        }
+
+        .modal-content {
+            background-color: black;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid green;
+            width: 80%;
+            text-align: center;
+        }
+
+        .close {
+            color: green;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: red;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div id="header">
+            <pre>
+>>==================================================================================================================================<<
+||                                                                                                                                  ||
+||                                                                                                                                  ||
+||   ██████████                                                            █████████                       ███                      ||
+||  ░░███░░░░███                                                          ███░░░░░███                     ░░░                       ||
+||   ░███   ░░███  ██████    ██████  █████████████    ██████  ████████   ███     ░░░   ██████  ████████   ████  █████ ████  █████   ||
+||   ░███    ░███ ░░░░░███  ███░░███░░███░░███░░███  ███░░███░░███░░███ ░███          ███░░███░░███░░███ ░░███ ░░███ ░███  ███░░    ||
+||   ░███    ░███  ███████ ░███████  ░███ ░███ ░███ ░███ ░███ ░███ ░███ ░███    █████░███████  ░███ ░███  ░███  ░███ ░███ ░░█████   ||
+||   ░███    ███  ███░░███ ░███░░░   ░███ ░███ ░███ ░███ ░███ ░███ ░███ ░░███  ░░███ ░███░░░   ░███ ░███  ░███  ░███ ░███  ░░░░███  ||
+||   ██████████  ░░████████░░██████  █████░███ █████░░██████  ████ █████ ░░█████████ ░░██████  ████ █████ █████ ░░████████ ██████   ||
+||  ░░░░░░░░░░    ░░░░░░░░  ░░░░░░  ░░░░░ ░░░ ░░░░░  ░░░░░░  ░░░░ ░░░░░   ░░░░░░░░░   ░░░░░░  ░░░░ ░░░░░ ░░░░░   ░░░░░░░░ ░░░░░░    ||
+||                                                                                                                                  ||
+||                                                                                                                                  ||
+>>==================================================================================================================================<<
+</pre>
+<p>--==[ by Late Nights & Coffee ]==--</p>
+</div>
+<ul id="project-list">
+<li class="project" data-url="https://todo.daemongenius.com">Todo</li>
+<li class="project" data-url="https://daemongenius.com/another-project">Another Project</li>
+<li class="project" data-url="https://daemongenius.com/yet-another-project">Yet Another Project</li>
+</ul>
+</div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+<div class="modal-content">
+<span class="close">&times;</span>
+<p>Loading...</p>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+const projects = document.querySelectorAll('.project');
+let selectedIndex = 0;
+
+const updateSelection = () => {
+    projects.forEach((project, index) => {
+        if (index === selectedIndex) {
+            project.classList.add('selected');
+        } else {
+            project.classList.remove('selected');
+        }
+    });
+};
+
+const showModal = () => {
+    const modal = document.getElementById("myModal");
+    const modalContent = modal.querySelector('.modal-content p');
+    const selectedProject = projects[selectedIndex];
+    const projectText = selectedProject.textContent;
+    modalContent.textContent = `You selected: ${projectText} ---> ERROR`;
+    modal.style.display = "block";
+};
+
+const closeModal = () => {
+    const modal = document.getElementById("myModal");
+    modal.style.display = "none";
+};
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowUp') {
+        selectedIndex = (selectedIndex - 1 + projects.length) % projects.length;
+        updateSelection();
+    } else if (event.key === 'ArrowDown') {
+        selectedIndex = (selectedIndex + 1) % projects.length;
+        updateSelection();
+    } else if (event.key === 'Enter') {
+        showModal();
+    } else if (event.key === 'Escape') {
+        closeModal();
+    }
+});
+
+document.querySelector('.close').addEventListener('click', closeModal);
+
+updateSelection();
+});
+</script>
+</body>
+</html>
